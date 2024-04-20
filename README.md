@@ -1,5 +1,5 @@
 # FCSIT CareerBuddy Chatbot
-WIA3002 Natural Language Processing Assignment
+WID3002 Natural Language Processing Assignment
 
 Welcome to the FCSIT CareerBuddy Chatbot repository! This chatbot is an AI-powered career companion designed to assist students in navigating their career development journey within the Faculty of Computer Science and Information Technology (FSKTM) at University Malaya.
 
