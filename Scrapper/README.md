@@ -18,3 +18,5 @@ This dataset contains job listings scrapped from www.jobstreet.com.my, including
 - **Overall Rating**: The overall rating of the company.
 - **Number of Ratings**: The number of ratings or reviews the company has received.
 
+## Example of scrapped job data 
+![](example_data.png)
