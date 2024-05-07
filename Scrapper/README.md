@@ -2,7 +2,7 @@
 
 ## Dataset Overview
 
-This dataset contains job listings scrapped from JobStreet, including various attributes such as job title, company, location, salary, job posted date, extracted date, job URL, job summary, review URL, overall rating, and number of ratings. This was done by utlizing  Selenium and BeautifulSoup in Python.
+This dataset contains job listings scrapped from www.jobstreet.com.my, including various attributes such as job title, company, location, salary, job posted date, extracted date, job URL, job summary, review URL, overall rating, and number of ratings. This was done by utlizing  Selenium and BeautifulSoup in Python.
 
 ## Attributes Description
 
