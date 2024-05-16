@@ -6,14 +6,14 @@ from data_preprocessing import load_events
 st.set_page_config(page_title="FCSIT Career Buddy", page_icon=":technologist:", layout="wide")
 
 def on_click_callback():
-    conversation = st.session_state.conversation
-    st.session_state.history.append(conversation)
+    human_prompt = st.session_state.human_prompt
+    st.session_state.history.append(human_prompt)
 
 def initialize_session_state():
     if "history" not in st.session_state:
         st.session_state.history = []
-initialize_session_state()
 
+initialize_session_state()
 def main():
     # -- header --- 
     st.title ("Welcome to the FCSIT Career Bot :wave:")
@@ -29,36 +29,35 @@ def main():
     # Load job data
     job_data = load_job_data('dataset/job_data.csv')
     events= load_events ('dataset/networking_events.csv')
-    
-    # Display previous conversation
-    for i in range(len(st.session_state.conversation)):
-        message = st.session_state.conversation[i]
-        if i % 2 == 0:  # User's message
-            st.markdown(f"**You:** {message}")
-        else:  # Chatbot's response
-            st.markdown(f"**Chatbot:** {message}")
-    
+
+    # # Display previous conversation
+    # for i in range(len(st.session_state.conversation)):
+    #     message = st.session_state.conversation[i]
+    #     if i % 2 == 0:  # User's message
+    #         st.markdown(f"**You:** {message}")
+    #     else:  # Chatbot's response
+    #         st.markdown(f"**Chatbot:** {message}")
+
     # User input
-    user_input = st.text_input("Enter your message here", key="user_input")
+    #user_input = st.text_input("Enter your message here", key="user_input")
 
+    # alyssa new
     chat_placeholder = st.container()
-    prompt_placheholder = st.form("chat-form")
+    prompt_placeholder = st.form("chat-form")
     credit_card_placeholder = st.empty()
-
-    # UI chat
 
     with chat_placeholder:
         for chat in st.session_state.history:
             st.markdown(chat)
 
-    with prompt_placheholder:
-        st.markdown("**Chat** - _press Enter to Submit_")
+    with prompt_placeholder:
+        st.markdown("**Chat** -_press Enter to Submit_")
         cols = st.columns((6, 1))
         user_input = cols[0].text_input(
             "Chat",
             value="Hello bot",
             label_visibility="collapsed",
-            key="conversation"
+            key="human_prompt",
         )
         cols[1].form_submit_button(
             "Submit",
@@ -101,11 +100,10 @@ def main():
             st.write("---")
     else:
         response = "I'm sorry, I didn't understand that. Can you please rephrase or ask something else?"
-        st.write(response)
 
     # Update conversation state
     st.session_state.conversation.append(user_input)
-    st.session_state.conversation.append(response)
+    st.session_state.history.append(response)
 
 if __name__ == "__main__":
     main()
