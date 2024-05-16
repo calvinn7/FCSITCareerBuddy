@@ -5,12 +5,21 @@ from data_preprocessing import load_events
 
 st.set_page_config(page_title="FCSIT Career Buddy", page_icon=":technologist:", layout="wide")
 
+def on_click_callback():
+    conversation = st.session_state.conversation
+    st.session_state.history.append(conversation)
+
+def initialize_session_state():
+    if "history" not in st.session_state:
+        st.session_state.history = []
+initialize_session_state()
+
 def main():
     # -- header --- 
     st.title ("Welcome to the FCSIT Career Bot :wave:")
     st.subheader ("Your personal AI-powered career companion ")
     st.write ("Check out our GitHub repo [here](https://github.com/calvinn7/FCSITCareerBuddy)")
-    
+
     # Clear conversation history at the beginning of each session
     if 'conversation' not in st.session_state:
         st.session_state.conversation = []
@@ -31,10 +40,36 @@ def main():
     
     # User input
     user_input = st.text_input("Enter your message here", key="user_input")
-    
-     # Check user input for different commands
+
+    chat_placeholder = st.container()
+    prompt_placheholder = st.form("chat-form")
+    credit_card_placeholder = st.empty()
+
+    # UI chat
+
+    with chat_placeholder:
+        for chat in st.session_state.history:
+            st.markdown(chat)
+
+    with prompt_placheholder:
+        st.markdown("**Chat** - _press Enter to Submit_")
+        cols = st.columns((6, 1))
+        user_input = cols[0].text_input(
+            "Chat",
+            value="Hello bot",
+            label_visibility="collapsed",
+            key="conversation"
+        )
+        cols[1].form_submit_button(
+            "Submit",
+            type="primary",
+            on_click=on_click_callback,
+        )
+
+    # Check user input for different commands
     if user_input.lower() == "hello":
         response = "Hello! How can I assist you today?"
+        st.write(response)
     elif "networking event" in user_input.lower() or "networking events" in user_input.lower():
         response = "Here are some upcoming networking events:"
         # Display networking events in a table
@@ -44,9 +79,10 @@ def main():
             st.write(f"**Date:** {event['date']}")
             st.write(f"**Location:** {event['location']}")
             st.write(f"**Details:** {event['details']}")
-            st.write("---") 
+            st.write("---")
     elif user_input.lower() == "faq":
         response = "Here are some frequently asked questions:"
+        st.write(response)
         # Logic to fetch and display FAQs
     elif user_input.strip():  # Check if user input is not empty or only whitespace
         # Recommend jobs based on user input
@@ -65,7 +101,8 @@ def main():
             st.write("---")
     else:
         response = "I'm sorry, I didn't understand that. Can you please rephrase or ask something else?"
-        
+        st.write(response)
+
     # Update conversation state
     st.session_state.conversation.append(user_input)
     st.session_state.conversation.append(response)
