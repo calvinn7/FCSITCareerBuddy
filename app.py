@@ -2,6 +2,8 @@ import streamlit as st
 from job_recommendation import recommend_jobs
 from data_preprocessing import load_job_data
 from data_preprocessing import load_events
+import torch
+
 
 st.set_page_config(page_title="FCSIT Career Buddy", page_icon=":technologist:", layout="wide")
 
@@ -11,6 +13,9 @@ def main():
     st.subheader ("Your personal AI-powered career companion ")
     st.write ("Check out our GitHub repo [here](https://github.com/calvinn7/FCSITCareerBuddy)")
     
+    response = "Hi, how can I assist you today? "
+    st.write(response)
+
     # Clear conversation history at the beginning of each session
     if 'conversation' not in st.session_state:
         st.session_state.conversation = []
@@ -18,7 +23,7 @@ def main():
         st.session_state.conversation.clear()
 
     # Load job data
-    job_data = load_job_data('dataset/job_data.csv')
+    job_data = load_job_data('dataset/preprocessed_job_data.csv')
     events= load_events ('dataset/networking_events.csv')
     
     # Display previous conversation
@@ -32,11 +37,17 @@ def main():
     # User input
     user_input = st.text_input("Enter your message here", key="user_input")
     
-     # Check user input for different commands
+ 
+    # Check user input for different commands
     if user_input.lower() == "hello":
         response = "Hello! How can I assist you today?"
+        st.write(response)
+
+
     elif "networking event" in user_input.lower() or "networking events" in user_input.lower():
         response = "Here are some upcoming networking events:"
+        st.write(response)
+        
         # Display networking events in a table
         st.header("Upcoming Networking Events:")
         for _, event in events.iterrows():
@@ -45,9 +56,12 @@ def main():
             st.write(f"**Location:** {event['location']}")
             st.write(f"**Details:** {event['details']}")
             st.write("---") 
+            
     elif user_input.lower() == "faq":
-        response = "Here are some frequently asked questions:"
+        response = "Please ask your FAQ question."
+        st.write(response)
         # Logic to fetch and display FAQs
+    
     elif user_input.strip():  # Check if user input is not empty or only whitespace
         # Recommend jobs based on user input
         recommended_jobs = recommend_jobs(user_input, job_data)
@@ -63,9 +77,11 @@ def main():
             st.write(f"**Job URL:** [{job['job_url']}]({job['job_url']})")
             st.write(f"**Company rating:** {job['overall_rating']} from {job['num_ratings']} reviews")
             st.write("---")
+
     else:
         response = "I'm sorry, I didn't understand that. Can you please rephrase or ask something else?"
-        
+    st.write(response)        
+   
     # Update conversation state
     st.session_state.conversation.append(user_input)
     st.session_state.conversation.append(response)
