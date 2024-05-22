@@ -57,7 +57,11 @@ def save_preprocessed_data(input_file_path, output_file_path):
     preprocessed_job_data.to_csv(output_file_path, index=False)
     print(f"Preprocessed data saved to {output_file_path}")
 
-input_file_path = 'dataset/job_data.csv'  # Path to your input CSV file
-output_file_path = 'dataset/preprocessed_job_data.csv'  # Path to save the preprocessed CSV file
+def main():
+    input_file_path = 'dataset/job_data.csv'  # Path to your input CSV file
+    output_file_path = 'dataset/preprocessed_job_data.csv'  # Path to save the preprocessed CSV file
 
-save_preprocessed_data(input_file_path, output_file_path)
+    save_preprocessed_data(input_file_path, output_file_path)
+
+if __name__ == "__main__":
+    main()
