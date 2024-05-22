@@ -9,7 +9,6 @@ The FCSIT CareerBuddy Chatbot provides students with personalized recommendation
 
 ## Features
 
-- **Personalized Recommendations**: Receive internship and job recommendations based on your skills and preferences.
+- **Personalized Recommendations**: Receive  job recommendations based on your preferences.
 - **Comprehensive Information**: Access detailed job listings, company insights, and upcoming networking events.
-- **Application Guidance**: Get assistance with crafting resumes, updating LinkedIn profiles, and preparing for interviews.
-- **User Feedback**: Provide feedback to improve the chatbot's performance and user experience.
+- **Application Guidance**: Get assistance with your application for internships.
