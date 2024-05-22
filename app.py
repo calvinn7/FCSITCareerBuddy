@@ -2,6 +2,7 @@ import base64
 import os.path
 import asyncio
 import traceback
+import random
 import streamlit as st
 from models.job_recommendation import recommend_jobs
 from data_preprocessing import load_job_data
@@ -56,6 +57,20 @@ def get_chat_message(
         </div>
         """
     return formatted_contents
+
+greet_responses = [
+    "Hi there, I am your career buddy! How can I help you today?",
+    "Hello! How can I assist you today?",
+    "Hi! What can I do for you today?",
+    "Greetings! How can I be of service today?"
+]
+
+bye_responses = [
+    "Thank you for using career buddy! See you soon.",
+    "Goodbye! Have a great day!",
+    "See you later! Take care.",
+    "Farewell! Hope to assist you again soon."
+]
 
 #when user inputs
 async def main(human_prompt: str) -> dict:
@@ -132,10 +147,10 @@ async def main(human_prompt: str) -> dict:
                                         Learn more about the company culture <a href="{job['review_url']}" target="_blank"> here.</a><br>                                        
                                         -----------------------------------------------------------------------------------<br>"""
             elif intent == 'greet':
-                reply_text = "Hi there, I am your career buddy! How can I help you today?"
+                reply_text = random.choice(greet_responses)
             
             elif intent == 'bye':
-                reply_text = "Thank you for using career buddy! See you soon."
+                reply_text = random.choice(bye_responses)
 
             # Render the reply as chat reply
             b64str = None
