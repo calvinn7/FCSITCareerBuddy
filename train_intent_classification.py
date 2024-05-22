@@ -78,8 +78,8 @@ training_args = TrainingArguments(
     num_train_epochs=10,
     per_device_train_batch_size=8,
     per_device_eval_batch_size=8,
-    warmup_steps=174,
-    weight_decay=0.0175,
+    warmup_steps=170,
+    weight_decay=0.0163,
     logging_dir='./logs',
     logging_steps=10,
     evaluation_strategy="epoch",
@@ -102,7 +102,7 @@ trainer.train()
 
 # Save the model and tokenizer
 logger.info("Saving model and tokenizer...")
-model.save_pretrained('./model/intent_model')
+model.save_pretrained('./models/intent_model')
 tokenizer.save_pretrained('./models/intent_model')
 
 # Save training arguments
