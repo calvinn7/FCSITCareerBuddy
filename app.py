@@ -9,6 +9,7 @@ from data_preprocessing import load_job_data
 from data_preprocessing import load_events
 from data_preprocessing import preprocess_text
 from intent_classification import classify_intent
+from user_feedback import feedback
 
 # Set global variables
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -151,6 +152,8 @@ async def main(human_prompt: str) -> dict:
             
             elif intent == 'bye':
                 reply_text = random.choice(bye_responses)
+                st.session_state.SHOW_FEEDBACK_FORM = True
+                #st.stop()
 
             # Render the reply as chat reply
             b64str = None
@@ -214,6 +217,7 @@ if "MEMORY" not in st.session_state:
     st.session_state.LOG = [INITIAL_PROMPT]
     st.session_state.LOG.append(f"AI: {INITIAL_PROMPT}")
     st.session_state.MEMORY = [{'role': "system", 'content': INITIAL_PROMPT}]
+    st.session_state.SHOW_FEEDBACK_FORM = False
 
 # Render chat history so far
 with chat_box:
@@ -228,6 +232,10 @@ with chat_box:
             contents = line.split("Human: ")[1]
             st.markdown(get_chat_message(contents, align="right"), unsafe_allow_html=True)
 
+# Show feedback form if triggered by the bye intent
+if st.session_state.SHOW_FEEDBACK_FORM:
+    feedback()
+    
 # Define an input box for human prompts
 with prompt_box:
     human_prompt = st.chat_input("Ask me anything about FCSIT career", key=f"text_input_{len(st.session_state.LOG)}")
