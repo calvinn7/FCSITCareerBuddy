@@ -1,8 +1,8 @@
-# FCSIT Career Buddy
+# FCSIT Career Bot
 
-Introducing the FCSIT Career Buddy: Your Personal Guide to Career Advancement in the Field of Computer Science and Information Technology (FCSIT)!
+Introducing the FCSIT Career Bot: Your Personal Guide to Career Advancement in the Field of Computer Science and Information Technology (FCSIT)!
 
-The FCSIT Career Buddy is an innovative AI-powered companion designed to assist individuals navigating the dynamic landscape of careers in computer science and information technology. Whether you're a seasoned professional seeking new opportunities or a student embarking on your career journey, our bot is here to provide personalized guidance and support every step of the way.
+The FCSIT Career Bot is an innovative AI-powered companion designed to assist individuals navigating the dynamic landscape of careers in computer science and information technology. Whether you're a seasoned professional seeking new opportunities or a student embarking on your career journey, our bot is here to provide personalized guidance and support every step of the way.
 
 ## Features
 

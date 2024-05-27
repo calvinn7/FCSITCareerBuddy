@@ -9,6 +9,8 @@ from nltk import pos_tag
 
 # Function to preprocess text data
 def preprocess_text(text):
+
+
     # Convert to lowercase
     text = text.lower()
     
@@ -35,11 +37,6 @@ def preprocess_text(text):
 def load_job_data(file_path):
     job_data = pd.read_csv(file_path)
 
-    return job_data
-
-def preprocess_job_data(file_path):
-    job_data = pd.read_csv(file_path)
-
     # Drop rows with NaN values in the 'summary' column
     job_data = job_data.dropna(subset=['summary'])
 
@@ -51,17 +48,3 @@ def load_events(file_path):
     job_data = pd.read_csv(file_path)
 
     return job_data
-
-def save_preprocessed_data(input_file_path, output_file_path):
-    preprocessed_job_data = preprocess_job_data(input_file_path)
-    preprocessed_job_data.to_csv(output_file_path, index=False)
-    print(f"Preprocessed data saved to {output_file_path}")
-
-def main():
-    input_file_path = 'dataset/job_data.csv'  # Path to your input CSV file
-    output_file_path = 'dataset/preprocessed_job_data.csv'  # Path to save the preprocessed CSV file
-
-    save_preprocessed_data(input_file_path, output_file_path)
-
-if __name__ == "__main__":
-    main()

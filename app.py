@@ -1,21 +1,14 @@
 import base64
-import os.path
+import os
 import asyncio
 import traceback
-import random
 import streamlit as st
-from models.job_recommendation import recommend_jobs
-from data_preprocessing import load_job_data
-from data_preprocessing import load_events
-from data_preprocessing import preprocess_text
-from intent_classification import classify_intent
-from user_feedback import feedback
+from job_recommendation import recommend_jobs
+from data_preprocessing import load_job_data, load_events
 
 # Set global variables
-ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 DEBUG = False
-
-st.set_page_config(page_title="FCSIT Career Buddy", page_icon=":technologist:", layout="wide")
 
 @st.cache_data(show_spinner=False)
 def get_local_img(file_path: str) -> str:
@@ -24,20 +17,15 @@ def get_local_img(file_path: str) -> str:
 
 @st.cache_data(show_spinner=False)
 def get_css() -> str:
-
     # Read CSS code from style.css file
-    with open(os.path.join(ROOT_DIR, "FCSITCareerBuddy" ,  "style.css"), "r") as f:
+    with open(os.path.join(ROOT_DIR, "style.css"), "r") as f:
         return f"<style>{f.read()}</style>"
 
-def get_chat_message(
-        contents: str = "",
-        align: str = "left"
-) -> str:
-
+def get_chat_message(contents: str = "", align: str = "left") -> str:
     # Formats the message in an chat fashion (user right, reply left)
     div_class = "AI-line"
     color = "rgb(54, 65, 85)"
-    file_path = os.path.join(ROOT_DIR, "FCSITCareerBuddy" , "assets", "bot.png")
+    file_path = os.path.join(ROOT_DIR, "assets", "bot.png")
     src = f"data:image/gif;base64,{get_local_img(file_path)}"
 
     if align == "right":
@@ -46,7 +34,7 @@ def get_chat_message(
         if "USER" in st.session_state:
             src = st.session_state.USER.avatar_url
         else:
-            file_path = os.path.join(ROOT_DIR, "FCSITCareerBuddy" ,"assets", "user_icon.png")
+            file_path = os.path.join(ROOT_DIR, "assets", "user_icon.png")
             src = f"data:image/gif;base64,{get_local_img(file_path)}"
     icon_code = f"<img class='chat-icon' src='{src}' width=32 height=32 alt='avatar'>"
     formatted_contents = f"""
@@ -59,26 +47,10 @@ def get_chat_message(
         """
     return formatted_contents
 
-greet_responses = [
-    "Hi there, I am your career buddy! How can I help you today?",
-    "Hello! How can I assist you today?",
-    "Hi! What can I do for you today?",
-    "Greetings! How can I be of service today?"
-]
-
-bye_responses = [
-    "Thank you for using career buddy! See you soon.",
-    "Goodbye! Have a great day!",
-    "See you later! Take care.",
-    "Farewell! Hope to assist you again soon."
-]
-
-#when user inputs
+# When user inputs
 async def main(human_prompt: str) -> dict:
-
     res = {'status': 0, 'message': "Success"}
     try:
-
         # Update both chat log and the model memory
         st.session_state.LOG.append(f"Human: {human_prompt}")
         st.session_state.MEMORY.append({'role': "user", 'content': human_prompt})
@@ -87,11 +59,11 @@ async def main(human_prompt: str) -> dict:
         prompt_box.empty()
 
         # Load job data
-        job_data = load_job_data('dataset/preprocessed_job_data.csv')
-        events= load_events ('dataset/networking_events.csv')
+        job_data = load_job_data('dataset/job_data.csv')
+        events = load_events('dataset/networking_events.csv')
 
         with chat_box:
-            #Write the latest human message first
+            # Write the latest human message first
             line = st.session_state.LOG[-1]
             contents = line.split("Human: ")[1]
             st.markdown(get_chat_message(contents, align="right"), unsafe_allow_html=True)
@@ -101,59 +73,48 @@ async def main(human_prompt: str) -> dict:
 
             reply_text = ""
 
-            preprocessed_input = preprocess_text(human_prompt)
+            # Sample answers
+            if human_prompt.lower() == "hello":
+                reply_text = "Hello! How can I assist you today?"
 
-            # Classify intent
-            intent = classify_intent(preprocessed_input)
-
-            if intent == "faq":
-                reply_text = "Here are some frequently asked questions:"
-
-                # Logic to fetch and display FAQs
-                # TO BE INSERTED THE NLP MODEL
-
-            elif intent == "networking_event":
-                reply_text = "Here are some upcoming networking events:<br><br>"
+            elif "networking event" in human_prompt.lower() or "networking events" in human_prompt.lower():
+                reply_text = "Here are some upcoming networking events:"
 
                 # Display networking events in a table
                 # TO BE INSERTED THE NLP MODEL
                 st.header("Upcoming Networking Events:")
                 for _, event in events.iterrows():
                     reply_text += f"""
-                                        Event: {event['event']}<br>
-                                        Date: {event['date']}<br>
-                                        Location: {event['location']}<br>
-                                        Details: {event['details']}<br>
-                                        -----------------------------------------------------------------------------------<br>"""
+                                    Event: {event['event']}<br>
+                                    Date: {event['date']}<br>
+                                    Location: {event['location']}<br>
+                                    Details: {event['details']}<br>
+                                    -----------------------------------------------------------------------------------<br>"""
 
-            
+            elif human_prompt.lower() == "faq":
+                reply_text = "Here are some frequently asked questions:"
 
-            elif intent == "job_recommendation": # Check if user input is not empty or only whitespace
+                # Logic to fetch and display FAQs
+                # TO BE INSERTED THE NLP MODEL
+
+            elif human_prompt.strip():  # Check if user input is not empty or only whitespace
                 # Recommend jobs based on user input
-                recommended_jobs = recommend_jobs(preprocessed_input, job_data)
+                recommended_jobs = recommend_jobs(human_prompt, job_data)
 
-                #Display recommended jobs in a table
-
-                reply_text = "Here are some personalised jobs for you: <br><br>"
-
+                # Display recommended jobs in a table
                 for _, job in recommended_jobs.iterrows():
-                    reply_text += f""" 
-                                        Job Title: {job['JobTitle']}<br>
-                                        Company: {job['company']}<br>
-                                        Location: {job['location']}<br>
-                                        Salary: {job['salary']}<br>
-                                        Date Posted: {job['date_posted']}<br>
-                                        Find out more about the job <a href="{job['job_url']}" target="_blank">here </a><br>
-                                        Company rating: {job['overall_rating']} from {job['num_ratings']} reviews<br>
-                                        Learn more about the company culture <a href="{job['review_url']}" target="_blank"> here.</a><br>                                        
-                                        -----------------------------------------------------------------------------------<br>"""
-            elif intent == 'greet':
-                reply_text = random.choice(greet_responses)
-            
-            elif intent == 'bye':
-                reply_text = random.choice(bye_responses)
-                st.session_state.SHOW_FEEDBACK_FORM = True
-                #st.stop()
+                    reply_text += f"""
+                                    Job Title: {job['JobTitle']}<br>
+                                    Company: {job['company']}<br>
+                                    Location: {job['location']}<br>
+                                    Salary: {job['salary']}<br>
+                                    Date Posted: {job['date_posted']}<br>
+                                    Job URL: <a href="{job['job_url']}" target="_blank">Click here to find out more.</a><br>
+                                    Company rating: {job['overall_rating']} from {job['num_ratings']} reviews<br>
+                                    -----------------------------------------------------------------------------------<br>"""
+
+            else:
+                reply_text = "I'm sorry, I didn't understand that. Can you please rephrase or ask something else?"
 
             # Render the reply as chat reply
             b64str = None
@@ -189,35 +150,29 @@ gradient_text_html = """
     font-size: 3em;
 }
 </style>
-<div class="gradient-text">Welcome to the FCSIT Career Buddy</div>
+<div class="gradient-text">Welcome to the FCSIT Career Bot</div>
 """
 st.markdown(gradient_text_html, unsafe_allow_html=True)
-st.subheader ("Your personal AI-powered career companion ")
+st.subheader("Your personal AI-powered career companion")
 chat_box = st.container()
 st.write("")
 prompt_box = st.empty()
 
-#sidebar
+# Sidebar
 with open("sidebar.md", "r") as sidebar_file:
     sidebar_content = sidebar_file.read()
 
-with open("style.css", "r") as styles_file:
-    styles_content = styles_file.read()
-
 st.sidebar.markdown(sidebar_content)
-st.write(styles_content, unsafe_allow_html=True)
 
 # Load CSS code
 st.markdown(get_css(), unsafe_allow_html=True)
 
 # Initialize/maintain a chat log and chat memory in Streamlit's session state
 if "MEMORY" not in st.session_state:
-
     INITIAL_PROMPT = "Hello! How can I assist you today?"
     st.session_state.LOG = [INITIAL_PROMPT]
     st.session_state.LOG.append(f"AI: {INITIAL_PROMPT}")
     st.session_state.MEMORY = [{'role': "system", 'content': INITIAL_PROMPT}]
-    st.session_state.SHOW_FEEDBACK_FORM = False
 
 # Render chat history so far
 with chat_box:
@@ -232,24 +187,18 @@ with chat_box:
             contents = line.split("Human: ")[1]
             st.markdown(get_chat_message(contents, align="right"), unsafe_allow_html=True)
 
-# Show feedback form if triggered by the bye intent
-if st.session_state.SHOW_FEEDBACK_FORM:
-    feedback()
-    
 # Define an input box for human prompts
 with prompt_box:
     human_prompt = st.chat_input("Ask me anything about FCSIT career", key=f"text_input_{len(st.session_state.LOG)}")
 
-#Gate the subsequent chatbot response to only when the user has entered a prompt
+# Gate the subsequent chatbot response to only when the user has entered a prompt
 if human_prompt is not None and len(human_prompt) > 0:
     run_res = asyncio.run(main(human_prompt))
     if run_res['status'] == 0 and not DEBUG:
-        st.rerun()
-
+        st.experimental_rerun()
     else:
         if run_res['status'] != 0:
             st.error(run_res['message'])
         with prompt_box:
             if st.button("Show text input field"):
-                st.rerun()
-
+                st.experimental_rerun()
