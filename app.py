@@ -5,6 +5,7 @@ import traceback
 import random
 import streamlit as st
 from models.job_recommendation import recommend_jobs
+from models.faq_model import get_most_similar_question
 from data_preprocessing import load_job_data
 from data_preprocessing import load_events
 from data_preprocessing import preprocess_text
@@ -107,8 +108,9 @@ async def main(human_prompt: str) -> dict:
             intent = classify_intent(preprocessed_input)
 
             if intent == "faq":
-                reply_text = "Here are some frequently asked questions:"
+                similar_question  = get_most_similar_question(preprocessed_input)
 
+                reply_text = similar_question["answer"]
                 # Logic to fetch and display FAQs
                 # TO BE INSERTED THE NLP MODEL
 
