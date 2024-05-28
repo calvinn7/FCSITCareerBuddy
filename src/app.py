@@ -48,10 +48,16 @@ def get_chat_message(
             {icon_code}
             <div class="chat-bubble" style="background: {color}; color: white;">
             &#8203;{contents}
-            </div>
         </div>
         """
     return formatted_contents
+
+async def type_reply(reply_box, message):
+    typed_message = ""
+    for char in message:
+        typed_message += char
+        reply_box.markdown(get_chat_message(typed_message), unsafe_allow_html=True)
+        await asyncio.sleep(0.0024)  # Adjust typing speed here
 
 #when user inputs
 async def main(human_prompt: str) -> dict:
@@ -132,6 +138,9 @@ async def main(human_prompt: str) -> dict:
             if b64str:
                 message += f"""<br><img src="data:image/png;base64,{b64str}" width=256 height=256>"""
             reply_box.markdown(get_chat_message(message), unsafe_allow_html=True)
+
+            # Render the reply as chat reply with typing effect
+            await type_reply(reply_box, reply_text)
 
             # Update the chat log and the model memory
             st.session_state.LOG.append(f"AI: {message}")
