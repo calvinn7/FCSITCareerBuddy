@@ -60,6 +60,13 @@ def get_chat_message(
         """
     return formatted_contents
 
+async def type_reply(reply_box, message):
+    typed_message = ""
+    for char in message:
+        typed_message += char
+        reply_box.markdown(get_chat_message(typed_message), unsafe_allow_html=True)
+        await asyncio.sleep(0.0024)  # Adjust typing speed here
+      
 greet_responses = [
     "Hi there, I am your career buddy! How can I help you today?",
     "Hello! How can I assist you today?",
@@ -164,6 +171,9 @@ async def main(human_prompt: str) -> dict:
                 message += f"""<br><img src="data:image/png;base64,{b64str}" width=256 height=256>"""
             reply_box.markdown(get_chat_message(message), unsafe_allow_html=True)
 
+            # Render the reply as chat reply with typing effect
+            await type_reply(reply_box, reply_text)
+            
             # Update the chat log and the model memory
             st.session_state.LOG.append(f"AI: {message}")
             st.session_state.MEMORY.append({'role': "assistant", 'content': reply_text})
