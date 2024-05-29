@@ -65,7 +65,7 @@ async def type_reply(reply_box, message):
     for char in message:
         typed_message += char
         reply_box.markdown(get_chat_message(typed_message), unsafe_allow_html=True)
-        await asyncio.sleep(0.0024)  # Adjust typing speed here
+        await asyncio.sleep(0.0010)  # Adjust typing speed here
       
 greet_responses = [
     "Hi there, I am your career buddy! How can I help you today?",
@@ -118,14 +118,10 @@ async def main(human_prompt: str) -> dict:
                 similar_question  = get_most_similar_question(preprocessed_input)
 
                 reply_text = similar_question["answer"]
-                # Logic to fetch and display FAQs
-                # TO BE INSERTED THE NLP MODEL
 
             elif intent == "networking_event":
                 reply_text = "Here are some upcoming networking events:<br><br>"
 
-                # Display networking events in a table
-                # TO BE INSERTED THE NLP MODEL
                 st.header("Upcoming Networking Events:")
                 for _, event in events.iterrows():
                     reply_text += f"""
@@ -134,7 +130,6 @@ async def main(human_prompt: str) -> dict:
                                         Location: {event['location']}<br>
                                         Details: {event['details']}<br>
                                         -----------------------------------------------------------------------------------<br>"""
-
             
 
             elif intent == "job_recommendation": # Check if user input is not empty or only whitespace
@@ -144,7 +139,6 @@ async def main(human_prompt: str) -> dict:
                 #Display recommended jobs in a table
 
                 reply_text = "Here are some personalised jobs for you: <br><br>"
-
                 for _, job in recommended_jobs.iterrows():
                     reply_text += f""" 
                                         Job Title: {job['JobTitle']}<br>
@@ -264,4 +258,3 @@ if human_prompt is not None and len(human_prompt) > 0:
         with prompt_box:
             if st.button("Show text input field"):
                 st.rerun()
-
