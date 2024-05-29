@@ -16,7 +16,8 @@ def preprocess_text(text):
     text = re.sub(r'[^a-zA-Z\s]', '', text)
     
     # Tokenization
-    tokens = word_tokenize(text)
+    tokenizer = nltk.tokenize.WhitespaceTokenizer()
+    tokens = tokenizer.tokenize(text)
     
     # Remove stopwords
     stop_words = set(stopwords.words('english'))
@@ -45,6 +46,8 @@ def preprocess_job_data(file_path):
 
     # Data preprocessing
     job_data['summary'] = job_data['summary'].apply(preprocess_text)
+    job_data['location'] = job_data['location'].apply(preprocess_text)
+
     return job_data
 
 def load_events(file_path):
