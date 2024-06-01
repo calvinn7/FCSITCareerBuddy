@@ -46,8 +46,10 @@ def preprocess_job_data(file_path):
 
     # Data preprocessing
     job_data['summary'] = job_data['summary'].apply(preprocess_text)
-    job_data['location'] = job_data['location'].apply(preprocess_text)
-
+    
+    # Convert 'num_ratings' to integer
+    job_data['num_ratings'] = job_data['num_ratings'].fillna(0).astype(int)
+    
     return job_data
 
 def load_events(file_path):
