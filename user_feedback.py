@@ -1,6 +1,7 @@
 import streamlit as st
 from streamlit_gsheets import GSheetsConnection
 import pandas as pd
+from datetime import datetime
 
 def feedback():
     # Display title & description
@@ -26,7 +27,7 @@ def feedback():
         # like how helpful, how precise, is there any bug(later will put text box),
         # anything need to improve for the chatbot
 
-        st.write("From 1 (Very not helpful) to 5 (Very Helpful)")
+        st.write("From 1 (Very Unhelpful) to 5 (Very Helpful)")
 
         helpfulness    = st.radio(label="How would you like to rate our chatbot helpfulness?", options=radio_options)
         precision      = st.radio(label="How precise does the chatbot able to answer the questions?", options=radio_options)
@@ -34,7 +35,7 @@ def feedback():
         suggestion     = st.text_input(label="We would like to hear your suggestion to improve our chatbot.")
 
         # Mark Mandatory Fields
-        st.markdown("***required**")
+        st.markdown("***All fields marked with an asterisk (*) are required.")
 
         submit_button = st.form_submit_button(label="Submit")
 
@@ -42,13 +43,11 @@ def feedback():
             # Check if all mandatory is filled
 
             if not username or not year_of_study:
-                st.warning("Ensure all the mandatory fields are filled.")
+                st.warning("Please ensure all the mandatory fields are filled.")
                 st.stop()
-            elif existed_data["Users"].str.contains(username).any():
-                st.warning("This user has already exists.")
-                st.stop()
-            else:
-                # Create new user and data
+
+            with st.spinner("Submitting your feedback..."):
+                # Create new user data
                 user_data = pd.DataFrame(
                     [
                         {
@@ -56,8 +55,10 @@ def feedback():
                             "Year Category": year_of_study,
                             "Precision": precision,
                             "Helpfulness": helpfulness,
-                            "Bug Encountered" :bug_text,
-                            "Suggestion" :suggestion
+                            "Bug Encountered": bug_text,
+                            "Suggestion": suggestion,
+                            "Timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                          
                         }
                     ]
                 )
@@ -67,9 +68,7 @@ def feedback():
 
                 # Update Google Sheet
                 conn.update(worksheet="Users", data=update_data)
-                st.success("The details has been submitted! Thank You!")
-
-
+                st.success("Your feedback has been submitted! Thank you!")
 
             st.write("Thank you for your feedback")
 
