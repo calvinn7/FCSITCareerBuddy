@@ -10,6 +10,7 @@ from data_preprocessing import load_job_data
 from data_preprocessing import load_events
 from data_preprocessing import preprocess_text
 from intent_classification import classify_intent
+from responses import get_greet_response, get_bye_response
 from user_feedback import feedback
 
 # Set global variables
@@ -22,6 +23,11 @@ st.set_page_config(page_title="FCSIT Career Buddy", page_icon=":technologist:", 
 def get_local_img(file_path: str) -> str:
     # Load a byte image and return its base64 encoded string
     return base64.b64encode(open(file_path, "rb").read()).decode("utf-8")
+
+def get_star_rating(rating):
+    filled_stars = '⭐' * round(rating)
+    empty_stars = '⭒' * (5 - round(rating))
+    return f"{filled_stars}{empty_stars}"
 
 @st.cache_data(show_spinner=False)
 def get_css() -> str:
@@ -61,26 +67,16 @@ def get_chat_message(
     return formatted_contents
 
 async def type_reply(reply_box, message):
+    typing_indicator = "<div class='typing-indicator'>Career Buddy is typing...</div>"
+    reply_box.markdown(get_chat_message(typing_indicator), unsafe_allow_html=True)
     typed_message = ""
     for char in message:
         typed_message += char
         reply_box.markdown(get_chat_message(typed_message), unsafe_allow_html=True)
-        await asyncio.sleep(0.0010)  # Adjust typing speed here
-      
-greet_responses = [
-    "Hi there, I am your career buddy! How can I help you today?",
-    "Hello! How can I assist you today?",
-    "Hi! What can I do for you today?",
-    "Greetings! How can I be of service today?"
-]
+        await asyncio.sleep(0.01)
+    reply_box.markdown(get_chat_message(typed_message), unsafe_allow_html=True)
 
-bye_responses = [
-    "Thank you for using career buddy! See you soon.",
-    "Goodbye! Have a great day!",
-    "See you later! Take care.",
-    "Farewell! Hope to assist you again soon."
-]
-
+        
 #when user inputs
 async def main(human_prompt: str) -> dict:
 
@@ -140,21 +136,28 @@ async def main(human_prompt: str) -> dict:
 
                 reply_text = "Here are some personalised jobs for you: <br><br>"
                 for _, job in recommended_jobs.iterrows():
+                    star_rating = get_star_rating(job['overall_rating'])
                     reply_text += f""" 
                                         Job Title: {job['JobTitle']}<br>
                                         Company: {job['company']}<br>
                                         Location: {job['location']}<br>
                                         Salary: {job['salary']}<br>
                                         Date Posted: {job['date_posted']}<br>
-                                        Find out more about the job <a href="{job['job_url']}" target="_blank">here </a><br>
-                                        Company rating: {job['overall_rating']} from {job['num_ratings']} reviews<br>
+                                        Find out more about the job <a href="{job['job_url']}" target="_blank">here </a><br>"""
+                    if job['overall_rating']>0:
+                        reply_text += f""" 
+                                        Company rating: {star_rating} from {job['num_ratings']} reviews<br>
                                         Learn more about the company culture <a href="{job['review_url']}" target="_blank"> here.</a><br>                                        
                                         -----------------------------------------------------------------------------------<br>"""
+                    else:
+                        reply_text += f""" 
+                                        No company insights is available.</a><br>                                        
+                                        -----------------------------------------------------------------------------------<br>"""
             elif intent == 'greet':
-                reply_text = random.choice(greet_responses)
+                reply_text = get_greet_response()
             
             elif intent == 'bye':
-                reply_text = random.choice(bye_responses)
+                reply_text = get_bye_response()
                 st.session_state.SHOW_FEEDBACK_FORM = True
                 #st.stop()
 
@@ -225,6 +228,16 @@ if "MEMORY" not in st.session_state:
     st.session_state.MEMORY = [{'role': "system", 'content': INITIAL_PROMPT}]
     st.session_state.SHOW_FEEDBACK_FORM = False
 
+# JavaScript code to focus on the chat input textarea
+js_code = """
+<script>
+    var textArea = window.parent.document.querySelector('textarea[data-testid="stChatInputTextArea"]');
+    if (textArea) {
+        textArea.focus();
+    }
+</script>
+"""
+
 # Render chat history so far
 with chat_box:
     for line in st.session_state.LOG[1:]:
@@ -232,6 +245,7 @@ with chat_box:
         if line.startswith("AI: "):
             contents = line.split("AI: ")[1]
             st.markdown(get_chat_message(contents), unsafe_allow_html=True)
+            st.components.v1.html(js_code, height=0)
 
         # For human prompts
         if line.startswith("Human: "):
