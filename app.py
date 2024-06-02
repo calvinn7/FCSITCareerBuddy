@@ -1,76 +1,24 @@
-import base64
-import os.path
+#import libraries
 import asyncio
 import traceback
-import random
 import streamlit as st
+
+#import functions from modules
 from models.job_recommendation import recommend_jobs
+from models.faq_model import get_most_similar_question
+from models.faq_model import faq_preprocess_text
 from data_preprocessing import load_job_data
 from data_preprocessing import load_events
 from data_preprocessing import preprocess_text
-from intent_classification import classify_intent
+from models.intent_classification import classify_intent
+from responses import get_greet_response, get_bye_response
+from user_feedback import feedback
+from welcome_screen import render_welcome_screen
+from utils import get_star_rating,get_css,clear_chat,get_chat_message,type_reply
 
-# Set global variables
-ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-DEBUG = False
 
 st.set_page_config(page_title="FCSIT Career Buddy", page_icon=":technologist:", layout="wide")
-
-@st.cache_data(show_spinner=False)
-def get_local_img(file_path: str) -> str:
-    # Load a byte image and return its base64 encoded string
-    return base64.b64encode(open(file_path, "rb").read()).decode("utf-8")
-
-@st.cache_data(show_spinner=False)
-def get_css() -> str:
-
-    # Read CSS code from style.css file
-    with open(os.path.join(ROOT_DIR, "FCSITCareerBuddy" ,  "style.css"), "r") as f:
-        return f"<style>{f.read()}</style>"
-
-def get_chat_message(
-        contents: str = "",
-        align: str = "left"
-) -> str:
-
-    # Formats the message in an chat fashion (user right, reply left)
-    div_class = "AI-line"
-    color = "rgb(54, 65, 85)"
-    file_path = os.path.join(ROOT_DIR, "FCSITCareerBuddy" , "assets", "bot.png")
-    src = f"data:image/gif;base64,{get_local_img(file_path)}"
-
-    if align == "right":
-        div_class = "human-line"
-        color = "rgb(51, 78, 255)"
-        if "USER" in st.session_state:
-            src = st.session_state.USER.avatar_url
-        else:
-            file_path = os.path.join(ROOT_DIR, "FCSITCareerBuddy" ,"assets", "user_icon.png")
-            src = f"data:image/gif;base64,{get_local_img(file_path)}"
-    icon_code = f"<img class='chat-icon' src='{src}' width=32 height=32 alt='avatar'>"
-    formatted_contents = f"""
-        <div class="{div_class}">
-            {icon_code}
-            <div class="chat-bubble" style="background: {color}; color: white;">
-            &#8203;{contents}
-            </div>
-        </div>
-        """
-    return formatted_contents
-
-greet_responses = [
-    "Hi there, I am your career buddy! How can I help you today?",
-    "Hello! How can I assist you today?",
-    "Hi! What can I do for you today?",
-    "Greetings! How can I be of service today?"
-]
-
-bye_responses = [
-    "Thank you for using career buddy! See you soon.",
-    "Goodbye! Have a great day!",
-    "See you later! Take care.",
-    "Farewell! Hope to assist you again soon."
-]
+DEBUG = False
 
 #when user inputs
 async def main(human_prompt: str) -> dict:
@@ -106,17 +54,15 @@ async def main(human_prompt: str) -> dict:
             intent = classify_intent(preprocessed_input)
 
             if intent == "faq":
-                reply_text = "Here are some frequently asked questions:"
+                faq_preprocessed_input = faq_preprocess_text(human_prompt)
+                similar_question  = get_most_similar_question(faq_preprocessed_input)
 
-                # Logic to fetch and display FAQs
-                # TO BE INSERTED THE NLP MODEL
+                reply_text = similar_question["answer"]
 
             elif intent == "networking_event":
-                reply_text = "Here are some upcoming networking events:<br><br>"
+                reply_text = f"""<h5>Here are some upcoming networking events:</h5>"""
 
-                # Display networking events in a table
-                # TO BE INSERTED THE NLP MODEL
-                st.header("Upcoming Networking Events:")
+                #st.header("Upcoming Networking Events:")
                 for _, event in events.iterrows():
                     reply_text += f"""
                                         Event: {event['event']}<br>
@@ -124,7 +70,6 @@ async def main(human_prompt: str) -> dict:
                                         Location: {event['location']}<br>
                                         Details: {event['details']}<br>
                                         -----------------------------------------------------------------------------------<br>"""
-
             
 
             elif intent == "job_recommendation": # Check if user input is not empty or only whitespace
@@ -133,24 +78,32 @@ async def main(human_prompt: str) -> dict:
 
                 #Display recommended jobs in a table
 
-                reply_text = "Here are some personalised jobs for you: <br><br>"
-
+                reply_text = "<h5>Here are some personalised jobs for you:</h5>"
                 for _, job in recommended_jobs.iterrows():
+                    star_rating = get_star_rating(job['overall_rating'])
                     reply_text += f""" 
                                         Job Title: {job['JobTitle']}<br>
                                         Company: {job['company']}<br>
                                         Location: {job['location']}<br>
                                         Salary: {job['salary']}<br>
                                         Date Posted: {job['date_posted']}<br>
-                                        Find out more about the job <a href="{job['job_url']}" target="_blank">here </a><br>
-                                        Company rating: {job['overall_rating']} from {job['num_ratings']} reviews<br>
+                                        Find out more about the job <a href="{job['job_url']}" target="_blank">here </a><br>"""
+                    if job['overall_rating']>0:
+                        reply_text += f""" 
+                                        Company rating: {star_rating} from {job['num_ratings']} reviews<br>
                                         Learn more about the company culture <a href="{job['review_url']}" target="_blank"> here.</a><br>                                        
                                         -----------------------------------------------------------------------------------<br>"""
+                    else:
+                        reply_text += f""" 
+                                        No company insights is available.</a><br>                                        
+                                        -----------------------------------------------------------------------------------<br>"""
             elif intent == 'greet':
-                reply_text = random.choice(greet_responses)
+                reply_text = get_greet_response()
             
             elif intent == 'bye':
-                reply_text = random.choice(bye_responses)
+                reply_text = get_bye_response()
+                st.session_state.SHOW_FEEDBACK_FORM = True
+                #st.stop()
 
             # Render the reply as chat reply
             b64str = None
@@ -159,6 +112,9 @@ async def main(human_prompt: str) -> dict:
                 message += f"""<br><img src="data:image/png;base64,{b64str}" width=256 height=256>"""
             reply_box.markdown(get_chat_message(message), unsafe_allow_html=True)
 
+            # Render the reply as chat reply with typing effect
+            await type_reply(reply_box, reply_text)
+            
             # Update the chat log and the model memory
             st.session_state.LOG.append(f"AI: {message}")
             st.session_state.MEMORY.append({'role': "assistant", 'content': reply_text})
@@ -173,37 +129,6 @@ async def main(human_prompt: str) -> dict:
 
 ### MAIN STREAMLIT UI STARTS HERE ###
 
-# Define main layout
-gradient_text_html = """
-<style>
-.gradient-text {
-    font-weight: bold;
-    background: -webkit-linear-gradient(left, rgb(51, 78, 255), rgb(197, 153, 233));
-    background: linear-gradient(to right, rgb(51, 78, 255), rgb(197, 153, 233));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    display: inline;
-    font-size: 3em;
-}
-</style>
-<div class="gradient-text">Welcome to the FCSIT Career Buddy</div>
-"""
-st.markdown(gradient_text_html, unsafe_allow_html=True)
-st.subheader ("Your personal AI-powered career companion ")
-chat_box = st.container()
-st.write("")
-prompt_box = st.empty()
-
-#sidebar
-with open("sidebar.md", "r") as sidebar_file:
-    sidebar_content = sidebar_file.read()
-
-with open("style.css", "r") as styles_file:
-    styles_content = styles_file.read()
-
-st.sidebar.markdown(sidebar_content)
-st.write(styles_content, unsafe_allow_html=True)
-
 # Load CSS code
 st.markdown(get_css(), unsafe_allow_html=True)
 
@@ -214,34 +139,100 @@ if "MEMORY" not in st.session_state:
     st.session_state.LOG = [INITIAL_PROMPT]
     st.session_state.LOG.append(f"AI: {INITIAL_PROMPT}")
     st.session_state.MEMORY = [{'role': "system", 'content': INITIAL_PROMPT}]
+    st.session_state.SHOW_FEEDBACK_FORM = False
+    st.session_state.stop = False
+    st.session_state.show_welcome = True
 
-# Render chat history so far
-with chat_box:
-    for line in st.session_state.LOG[1:]:
-        # For AI response
-        if line.startswith("AI: "):
-            contents = line.split("AI: ")[1]
-            st.markdown(get_chat_message(contents), unsafe_allow_html=True)
 
-        # For human prompts
-        if line.startswith("Human: "):
-            contents = line.split("Human: ")[1]
-            st.markdown(get_chat_message(contents, align="right"), unsafe_allow_html=True)
+# JavaScript code to focus on the chat input textarea
+js_code = """
+<script>
+    var textArea = window.parent.document.querySelector('textarea[data-testid="stChatInputTextArea"]');
+    if (textArea) {
+        textArea.focus();
+    }
+</script>
+"""
+if st.session_state.show_welcome:
+    render_welcome_screen()
+else:
+    # Define main layout
+    gradient_text_html = """
+    <style>
+    .gradient-text {
+        font-weight: bold;
+        background: -webkit-linear-gradient(left, rgb(51, 78, 255), rgb(197, 153, 233));
+        background: linear-gradient(to right, rgb(51, 78, 255), rgb(197, 153, 233));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        display: inline;
+        font-size: 3em;
+    }
+    </style>
+    <div class="gradient-text">Welcome to FCSIT Career Buddy</div>
+    """
+    st.markdown(gradient_text_html, unsafe_allow_html=True)
+    st.subheader ("Your personal AI-powered career companion ")
+    chat_box = st.container()
+    st.write("")
+    prompt_box = st.empty()
 
-# Define an input box for human prompts
-with prompt_box:
-    human_prompt = st.chat_input("Ask me anything about FCSIT career", key=f"text_input_{len(st.session_state.LOG)}")
+        
+    with st.sidebar:
+        if st.button("Clear Chat"):
+            clear_chat()
+            INITIAL_PROMPT = "Hello! How can I assist you today?"
+            st.session_state.LOG = [INITIAL_PROMPT]
+            st.session_state.LOG.append(f"AI: {INITIAL_PROMPT}")
+            st.session_state.MEMORY = [{'role': "system", 'content': INITIAL_PROMPT}]
+    
+    # Render chat history so far
+    with chat_box:
+        for line in st.session_state.LOG[1:]:
+            # For AI response
+            if line.startswith("AI: "):
+                contents = line.split("AI: ")[1]
+                st.markdown(get_chat_message(contents), unsafe_allow_html=True)
+                st.components.v1.html(js_code, height=0)
+                
+            # For human prompts
+            if line.startswith("Human: "):
+                contents = line.split("Human: ")[1]
+                st.markdown(get_chat_message(contents, align="right"), unsafe_allow_html=True)
 
-#Gate the subsequent chatbot response to only when the user has entered a prompt
-if human_prompt is not None and len(human_prompt) > 0:
-    run_res = asyncio.run(main(human_prompt))
-    if run_res['status'] == 0 and not DEBUG:
-        st.rerun()
+        #sidebar
+        with open("sidebar.md", "r") as sidebar_file:
+            sidebar_content = sidebar_file.read()
 
-    else:
-        if run_res['status'] != 0:
-            st.error(run_res['message'])
+        with open("style.css", "r") as styles_file:
+            styles_content = styles_file.read()
+
+        st.sidebar.markdown(sidebar_content)
+        st.write(styles_content, unsafe_allow_html=True)
+
+        # User feedback in the sidebar
+        st.sidebar.header("Feedback")
+        st.sidebar.markdown("We value your feedback. Click the feedback button to start your feedback!")
+        if(st.sidebar.button("User Feedback")):
+            st.session_state.SHOW_FEEDBACK_FORM = True
+
+        # Show feedback form if triggered by the bye intent
+        if st.session_state.SHOW_FEEDBACK_FORM:
+            feedback()
+            
+        # Define an input box for human prompts
         with prompt_box:
-            if st.button("Show text input field"):
+            human_prompt = st.chat_input("Ask me anything about FCSIT career", key=f"text_input_{len(st.session_state.LOG)}")
+
+        #Gate the subsequent chatbot response to only when the user has entered a prompt
+        if human_prompt is not None and len(human_prompt) > 0:
+            run_res = asyncio.run(main(human_prompt))
+            if run_res['status'] == 0 and not DEBUG:
                 st.rerun()
 
+            else:
+                if run_res['status'] != 0:
+                    st.error(run_res['message'])
+                with prompt_box:
+                    if st.button("Show text input field"):
+                        st.rerun()
