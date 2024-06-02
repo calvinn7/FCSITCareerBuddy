@@ -36,6 +36,12 @@ def get_css() -> str:
     with open(os.path.join(ROOT_DIR, "FCSITCareerBuddy" ,  "style.css"), "r") as f:
         return f"<style>{f.read()}</style>"
 
+def clear_chat():
+    st.session_state.LOG = ["Hello! How can I assist you today?"]
+    st.session_state.MEMORY = [{'role': "system", 'content': "Hello! How can I assist you today?"}]
+    st.session_state.SHOW_FEEDBACK_FORM = False
+    st.session_state.stop = False
+
 def get_chat_message(
         contents: str = "",
         align: str = "left"
@@ -61,7 +67,6 @@ def get_chat_message(
             {icon_code}
             <div class="chat-bubble" style="background: {color}; color: white;">
             &#8203;{contents}
-        </div>
         """
     return formatted_contents
 
@@ -75,7 +80,14 @@ async def type_reply(reply_box, message):
         await asyncio.sleep(0.0024)
     reply_box.markdown(get_chat_message(typed_message), unsafe_allow_html=True)
 
-        
+with st.sidebar:
+    if st.button("Clear Chat"):
+        clear_chat()
+        INITIAL_PROMPT = "Hello! How can I assist you today?"
+        st.session_state.LOG = [INITIAL_PROMPT]
+        st.session_state.LOG.append(f"AI: {INITIAL_PROMPT}")
+        st.session_state.MEMORY = [{'role': "system", 'content': INITIAL_PROMPT}]
+
 #when user inputs
 async def main(human_prompt: str) -> dict:
 
@@ -115,9 +127,9 @@ async def main(human_prompt: str) -> dict:
                 reply_text = similar_question["answer"]
 
             elif intent == "networking_event":
-                reply_text = "Here are some upcoming networking events:<br><br>"
+                reply_text = f"""<h5>Here are some upcoming networking events:</h5>"""
 
-                st.header("Upcoming Networking Events:")
+                #st.header("Upcoming Networking Events:")
                 for _, event in events.iterrows():
                     reply_text += f"""
                                         Event: {event['event']}<br>
@@ -133,7 +145,7 @@ async def main(human_prompt: str) -> dict:
 
                 #Display recommended jobs in a table
 
-                reply_text = "Here are some personalised jobs for you: <br><br>"
+                reply_text = "<h5>Here are some personalised jobs for you:</h5>"
                 for _, job in recommended_jobs.iterrows():
                     star_rating = get_star_rating(job['overall_rating'])
                     reply_text += f""" 
@@ -232,6 +244,7 @@ if "MEMORY" not in st.session_state:
     st.session_state.LOG.append(f"AI: {INITIAL_PROMPT}")
     st.session_state.MEMORY = [{'role': "system", 'content': INITIAL_PROMPT}]
     st.session_state.SHOW_FEEDBACK_FORM = False
+    st.session_state.stop = False
 
 # JavaScript code to focus on the chat input textarea
 js_code = """
