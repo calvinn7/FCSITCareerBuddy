@@ -72,7 +72,7 @@ async def type_reply(reply_box, message):
     for char in message:
         typed_message += char
         reply_box.markdown(get_chat_message(typed_message), unsafe_allow_html=True)
-        await asyncio.sleep(0.008)
+        await asyncio.sleep(0.0024)
     reply_box.markdown(get_chat_message(typed_message), unsafe_allow_html=True)
 
         
