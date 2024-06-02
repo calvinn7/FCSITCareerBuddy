@@ -61,7 +61,6 @@ def get_chat_message(
             {icon_code}
             <div class="chat-bubble" style="background: {color}; color: white;">
             &#8203;{contents}
-            </div>
         </div>
         """
     return formatted_contents
@@ -73,7 +72,7 @@ async def type_reply(reply_box, message):
     for char in message:
         typed_message += char
         reply_box.markdown(get_chat_message(typed_message), unsafe_allow_html=True)
-        await asyncio.sleep(0.01)
+        await asyncio.sleep(0.008)
     reply_box.markdown(get_chat_message(typed_message), unsafe_allow_html=True)
 
         
@@ -216,6 +215,12 @@ with open("style.css", "r") as styles_file:
 st.sidebar.markdown(sidebar_content)
 st.write(styles_content, unsafe_allow_html=True)
 
+# User feedback in the sidebar
+st.sidebar.header("Feedback")
+st.sidebar.markdown("We value your feedback. Click the feedback button to start your feedback!")
+if(st.sidebar.button("User Feedback")):
+    st.session_state.SHOW_FEEDBACK_FORM = True
+
 # Load CSS code
 st.markdown(get_css(), unsafe_allow_html=True)
 
@@ -245,7 +250,7 @@ with chat_box:
         if line.startswith("AI: "):
             contents = line.split("AI: ")[1]
             st.markdown(get_chat_message(contents), unsafe_allow_html=True)
-            st.components.v1.html(js_code, height=0)
+            #st.components.v1.html(js_code, height=0)
 
         # For human prompts
         if line.startswith("Human: "):
