@@ -15,8 +15,8 @@ def get_dynamic_greeting():
 
 # List of motivational quotes or fun facts
 motivational_quotes = [
-    "🌟 'The only way to do great work is to love what you do.' - Steve Jobs",
     "🚀 'Your career is your business. It’s time for you to manage it as a CEO.' - Dorit Sher",
+    "🌟 'The only way to do great work is to love what you do.' - Steve Jobs",    
     "💼 'Choose a job you love, and you will never have to work a day in your life.' - Confucius",
     "📈 'Success is not the key to happiness. Happiness is the key to success. If you love what you are doing, you will be successful.' - Albert Schweitzer",
     "🌐 'Networking is not about just connecting people. It’s about connecting people with people, people with ideas, and people with opportunities.' - Michele Jennae",
@@ -47,11 +47,11 @@ motivational_quotes = [
 
  # Select a random quote
 import random
-selected_quote = random.choice(motivational_quotes)  
 
 # Define welcome screen
 def render_welcome_screen():
     dynamic_greeting = get_dynamic_greeting()
+    selected_quote = random.choice(motivational_quotes)  
 
     gradient_text_html = f"""
     <style>
