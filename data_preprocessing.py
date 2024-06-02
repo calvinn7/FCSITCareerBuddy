@@ -2,9 +2,7 @@ import pandas as pd
 import re
 import nltk
 from nltk.corpus import stopwords
-from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
-from nltk import pos_tag
 
 
 # Function to preprocess text data
@@ -46,6 +44,8 @@ def preprocess_job_data(file_path):
 
     # Data preprocessing
     job_data['summary'] = job_data['summary'].apply(preprocess_text)
+    job_data['location'] = job_data['location'].apply(preprocess_text)
+
     
     # Convert 'num_ratings' to integer
     job_data['num_ratings'] = job_data['num_ratings'].fillna(0).astype(int)

@@ -1,5 +1,6 @@
 
 import base64
+import math
 import os
 import streamlit as st
 import asyncio
@@ -13,9 +14,12 @@ def get_local_img(file_path: str) -> str:
     return base64.b64encode(open(file_path, "rb").read()).decode("utf-8")
 
 def get_star_rating(rating):
-    filled_stars = '⭐' * round(rating)
-    empty_stars = '⭒' * (5 - round(rating))
-    return f"{filled_stars}{empty_stars}"
+    if not math.isnan(rating):  # Check if rating is not NaN
+        filled_stars = '⭐' * round(rating)
+        empty_stars = '⭒' * (5 - round(rating))
+        return f"{filled_stars}{empty_stars}"
+    else:
+        return "Rating not available"  # or any other appropriate handling for NaN values
 
 @st.cache_data(show_spinner=False)
 def get_css() -> str:

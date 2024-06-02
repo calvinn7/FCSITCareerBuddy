@@ -9,7 +9,7 @@ from models.faq_model import get_most_similar_question
 from data_preprocessing import load_job_data
 from data_preprocessing import load_events
 from data_preprocessing import preprocess_text
-from intent_classification import classify_intent
+from models.intent_classification import classify_intent
 from responses import get_greet_response, get_bye_response
 from user_feedback import feedback
 from welcome_screen import render_welcome_screen
