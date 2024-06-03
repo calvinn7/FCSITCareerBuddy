@@ -18,8 +18,15 @@ def preprocess_text(text):
     tokens = tokenizer.tokenize(text)
     
     # Remove stopwords
-    stop_words = set(stopwords.words('english'))
-    filtered_tokens = [word for word in tokens if word not in stop_words]
+    default_stopwords = set(stopwords.words('english'))
+
+    # Words to remove from the stopwords list
+    words_to_keep = {'how', 'when', 'where','what','who','why','before','during','after'}
+
+    # Customize stopwords by removing specific words
+    final_stopwords = default_stopwords - words_to_keep
+
+    filtered_tokens = [word for word in tokens if word not in final_stopwords]
     
     # Lemmatization
     lemmatizer = WordNetLemmatizer()
