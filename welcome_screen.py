@@ -78,7 +78,7 @@ def render_welcome_screen():
     }}
 
     .credits {{
-        margin-top: 230px;
+        margin-top: 250px;
         font-size: 0.9em;
         color: gray;
         text-align: center;
@@ -92,7 +92,7 @@ def render_welcome_screen():
     st.subheader("Your personal AI-powered career companion")
 
     st.markdown("""
-    **FCSIT Career Buddy** is designed to help you with job recommendations, networking events, and career advice.
+    **FCSIT Career Buddy** is designed to help you with job recommendations, networking events, and application guidance.
     
     **How to Use:**
     - Ask any questions about job recommendations, networking events or internship application.
@@ -116,5 +116,6 @@ def render_welcome_screen():
     st.markdown("""
     <div class="credits">
         Developed by Calvin, Alyssa, Serene, Trishan, Jia Sheng, and Hua Qi
+            \nNLP Assignment 2023/2024 Semester 2 @UM
     </div>
     """, unsafe_allow_html=True)
