@@ -103,6 +103,9 @@ async def main(human_prompt: str) -> dict:
                 st.session_state.SHOW_FEEDBACK_FORM = True
                 #st.stop()
 
+            else:
+                reply_text = "Sorry, I didn't understand that. Could you please rephrase your question?"
+
             # Render the reply as chat reply
             b64str = None
             message = f"{reply_text}"
