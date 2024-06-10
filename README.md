@@ -6,14 +6,27 @@ Welcome to the FCSIT CareerBuddy Chatbot repository! This chatbot is an AI-power
 
 ## 📚 Overview
 
-The FCSIT CareerBuddy Chatbot provides students with personalized recommendations, comprehensive job information, and application guidance to streamline the internship and job search process. Leveraging natural language processing (NLP) techniques, the chatbot offers tailored support based on individual skills, interests, and career aspirations.
+The FCSIT CareerBuddy Chatbot provides students with personalized recommendations, comprehensive job information, and application guidance to streamline the internship and job search process. Leveraging natural language processing (NLP) techniques, the chatbot offers a unique user experience for students.Feel free to check out our infographics [here](https://drive.google.com/file/d/1QoYXJ9EJNsxz8PtvtYZdwY7obvCnah3e/view?usp=sharing).
 
 ## ✨ Features
 
 - **🎯 Personalized Recommendations**: Receive job recommendations based on your preferences.
 - **📋 Comprehensive Information**: Access detailed job listings, company insights, and upcoming networking events.
 - **📝 Application Guidance**: Get assistance with your application for internships.
+  
+## 🌐 Deployed Application
 
+You can interact with the deployed FCSIT CareerBuddy Chatbot [here](https://fcsitcareerbuddy.streamlit.app/).
+
+## 📄 Usage
+
+Once the chatbot is running, you can interact with it by asking questions or requesting assistance. Here are some example queries:
+
+- "Can you recommend some job opportunities for a software developer?"
+- "What are some upcoming networking events?"
+- "How do I apply for an internship?"
+- "Who are the intern coordinators for next semester?"
+  
 ## 💻 Tech Stack
 
 - **Programming Languages**: Python
@@ -50,14 +63,6 @@ The FCSIT CareerBuddy Chatbot provides students with personalized recommendation
     nltk.download('averaged_perceptron_tagger')
     ```
     
-4. **Training the Intent Classification Model**
-
-    Before using the chatbot, you would need to train the intent classification model, it will take a few minutes:
-
-    ```sh
-    python train_intent_model.py
-    ```
-
 ### Running the Chatbot
 
 1. **Start the Streamlit Application**
@@ -74,12 +79,21 @@ The FCSIT CareerBuddy Chatbot provides students with personalized recommendation
 
 Meet the team behind the FCSIT CareerBuddy Chatbot:
 
-- **Calvin** - Project Lead/Frontend/Backend
-- **Alyssa** - Frontend
-- **Trishan** - Backend
-- **Serene** - Backend
-- **Jia Sheng** - Backend
-- **Hua Qi** - Backend
+- **Calvin** - Project Lead, Frontend, Intent Module, Web Scrapper
+- **Alyssa** - Frontend Development, UI/UX Design
+- **Trishan** - Backend Development, Jobs Module
+- **Serene** - Backend Development, FAQ Module
+- **Jia Sheng** - Backend Development, Feedback User Testing
+- **Hua Qi** - Backend Development, Events Module
 
-and check out our infographics [here](https://drive.google.com/file/d/1QoYXJ9EJNsxz8PtvtYZdwY7obvCnah3e/view?usp=sharing).
+
+## 📫 Contact
+
+If you have any questions or feedback, feel free to reach out to me at [calvinjmy993@gmail.com].
+Connect with us too 
+- **Calvin**: [LinkedIn](https://www.linkedin.com/in/calvin-jee-490a96265/)
+- **Alyssa**: [LinkedIn](https://www.linkedin.com/in/alyssa-atmasava-87a875273/)
+- **Trishan**: [LinkedIn](https://www.linkedin.com/in/trishan-raj-278b96201/)
+- **Serene**: [LinkedIn](https://www.linkedin.com/in/gan-serene-913547270/)
+
 
