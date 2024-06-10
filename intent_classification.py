@@ -29,7 +29,7 @@ def classify_intent(query):
 
     predicted_class = torch.argmax(probs, dim=1).item()
     return le.inverse_transform([predicted_class])[0]
-
+"""
 # Test cases
 test_queries = [
     "How to apply for internship?",
@@ -46,3 +46,4 @@ for query in test_queries:
         print(f"Query: {query}\nPredicted Intent: {intent}\n")
     else:
         print(f"Query: {query}\nPredicted Intent: Not confident enough to classify\n")
+"""

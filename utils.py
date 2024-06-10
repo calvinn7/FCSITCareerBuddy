@@ -30,9 +30,6 @@ def get_css() -> str:
     # Construct relative file path
     css_file_path = os.path.join(ROOT_DIR, "style.css")
 
-    # Debugging: print constructed file path
-    st.write("Constructed CSS file path:", css_file_path)
-
     # Read CSS code from style.css file
     try:
         with open(css_file_path, "r") as f:
@@ -85,11 +82,13 @@ async def type_reply(reply_box, message):
         await asyncio.sleep(0.010)  # Increased sleep time for better visibility
     reply_box.markdown(get_chat_message(typed_message), unsafe_allow_html=True)
 
+"""
 # Debugging: print paths to verify existence
 st.write("Verifying file paths:")
 st.write("CSS file path:", os.path.join(ROOT_DIR, "style.css"))
 st.write("Bot image path:", os.path.join(ROOT_DIR, "assets", "bot.png"))
 st.write("User icon path:", os.path.join(ROOT_DIR, "assets", "user_icon.png"))
+"""
 
 # Ensure these files exist in the repository
 assert os.path.exists(os.path.join(ROOT_DIR, "style.css")), "CSS file is missing!"
