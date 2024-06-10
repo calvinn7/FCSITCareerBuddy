@@ -1,8 +1,8 @@
 query,intent
 find me a job,job_recommendation
 networking events,networking_event
-how,faq
-how to apply,faq
+Who do I need to seek approval approve for my intern application,faq
+who are coordinators,faq
 job openings,job_recommendation
 upcoming career fairs,networking_event
 job search,job_recommendation
@@ -25,7 +25,7 @@ open positions,job_recommendation
 any career fairs,networking_event
 seeking job opportunities,job_recommendation
 upcoming industry events,networking_event
-explain the intern application process,faq
+How can I / way find a suitable suitable intern?,faq
 tech job fairs,networking_event
 vacancies for developers,job_recommendation
 help me find a job,job_recommendation
@@ -49,7 +49,7 @@ How long do I need to intern?,faq
 How do I calculate the duration of intern?,faq
 Where can I apply for internship?,faq
 Can I apply multiple companies for placement?,faq
-Who are the coordinators?,faq
+who are department coordinator,faq
 why I need intern?,faq
 what events,networking_event
 what career fairs,networking_event
@@ -57,8 +57,8 @@ what is happening,networking_event
 I wanna know about networking events,networking_event
 recommend me jobs,job_recommendation
 suggest me positions,job_recommendation
-reason to intern,faq
-intern meaning,faq
+What happens if I take medical leave?,faq
+What are the assessments for intern?,faq
 internship fair,networking_event
 networking events coming soon,networking_event
 Im interested in web development jobs,job_recommendation
