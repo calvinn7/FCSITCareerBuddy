@@ -4,6 +4,8 @@ import nltk
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 
+# Download NLTK stopwords
+nltk.download('stopwords')
 
 # Function to preprocess text data
 def preprocess_text(text):
