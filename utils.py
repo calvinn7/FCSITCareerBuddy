@@ -5,7 +5,7 @@ import streamlit as st
 import asyncio
 
 # Set global variables
-ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 @st.cache_data(show_spinner=False)
 def get_local_img(file_path: str) -> str:
@@ -28,7 +28,7 @@ def get_star_rating(rating):
 @st.cache_data(show_spinner=False)
 def get_css() -> str:
     # Construct relative file path
-    css_file_path = os.path.join(ROOT_DIR, "FCSITCareerBuddy", "style.css")
+    css_file_path = os.path.join(ROOT_DIR, "style.css")
 
     # Debugging: print constructed file path
     st.write("Constructed CSS file path:", css_file_path)
@@ -54,7 +54,7 @@ def get_chat_message(
     # Formats the message in a chat fashion (user right, reply left)
     div_class = "AI-line"
     color = "rgb(54, 65, 85)"
-    file_path = os.path.join(ROOT_DIR, "FCSITCareerBuddy", "assets", "bot.png")
+    file_path = os.path.join(ROOT_DIR, "assets", "bot.png")
     src = f"data:image/gif;base64,{get_local_img(file_path)}"
 
     if align == "right":
@@ -63,7 +63,7 @@ def get_chat_message(
         if "USER" in st.session_state:
             src = st.session_state.USER.avatar_url
         else:
-            file_path = os.path.join(ROOT_DIR, "FCSITCareerBuddy", "assets", "user_icon.png")
+            file_path = os.path.join(ROOT_DIR, "assets", "user_icon.png")
             src = f"data:image/gif;base64,{get_local_img(file_path)}"
     icon_code = f"<img class='chat-icon' src='{src}' width=32 height=32 alt='avatar'>"
     formatted_contents = f"""
@@ -84,3 +84,14 @@ async def type_reply(reply_box, message):
         reply_box.markdown(get_chat_message(typed_message), unsafe_allow_html=True)
         await asyncio.sleep(0.010)  # Increased sleep time for better visibility
     reply_box.markdown(get_chat_message(typed_message), unsafe_allow_html=True)
+
+# Debugging: print paths to verify existence
+st.write("Verifying file paths:")
+st.write("CSS file path:", os.path.join(ROOT_DIR, "style.css"))
+st.write("Bot image path:", os.path.join(ROOT_DIR, "assets", "bot.png"))
+st.write("User icon path:", os.path.join(ROOT_DIR, "assets", "user_icon.png"))
+
+# Ensure these files exist in the repository
+assert os.path.exists(os.path.join(ROOT_DIR, "style.css")), "CSS file is missing!"
+assert os.path.exists(os.path.join(ROOT_DIR, "assets", "bot.png")), "Bot image is missing!"
+assert os.path.exists(os.path.join(ROOT_DIR, "assets", "user_icon.png")), "User icon image is missing!"
