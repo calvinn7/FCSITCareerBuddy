@@ -81,3 +81,5 @@ Meet the team behind the FCSIT CareerBuddy Chatbot:
 - **Jia Sheng** - Backend
 - **Hua Qi** - Backend
 
+and check out our infographics [here](https://drive.google.com/file/d/1QoYXJ9EJNsxz8PtvtYZdwY7obvCnah3e/view?usp=sharing).
+
