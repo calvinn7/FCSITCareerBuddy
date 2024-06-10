@@ -1,6 +1,8 @@
 import torch
 import pickle
 from transformers import BertTokenizer, BertForSequenceClassification
+from data_preprocessing import preprocess_text
+
 
 # Load the saved model and tokenizer
 model = BertForSequenceClassification.from_pretrained('./models/intent_model')
@@ -27,3 +29,20 @@ def classify_intent(query):
 
     predicted_class = torch.argmax(probs, dim=1).item()
     return le.inverse_transform([predicted_class])[0]
+
+# Test cases
+test_queries = [
+    "How to apply for internship?",
+    "Can you tell me about upcoming networking events?",
+    "Is there a workshop on data science?",
+    "I want to know more Data Analyst jobs."
+]
+
+# Testing the function
+print("Testing intent classification:\n")
+for query in test_queries:
+    intent = classify_intent(preprocess_text(query))
+    if intent is not None:
+        print(f"Query: {query}\nPredicted Intent: {intent}\n")
+    else:
+        print(f"Query: {query}\nPredicted Intent: Not confident enough to classify\n")
