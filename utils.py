@@ -10,7 +10,12 @@ ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 @st.cache_data(show_spinner=False)
 def get_local_img(file_path: str) -> str:
     # Load a byte image and return its base64 encoded string
-    return base64.b64encode(open(file_path, "rb").read()).decode("utf-8")
+    try:
+        with open(file_path, "rb") as f:
+            return base64.b64encode(f.read()).decode("utf-8")
+    except FileNotFoundError:
+        st.error(f"Image file not found at path: {file_path}")
+        return ""
 
 def get_star_rating(rating):
     if not math.isnan(rating):  # Check if rating is not NaN
@@ -26,7 +31,7 @@ def get_css() -> str:
     css_file_path = os.path.join(ROOT_DIR, "FCSITCareerBuddy", "style.css")
 
     # Debugging: print constructed file path
-    print("Constructed CSS file path:", css_file_path)
+    st.write("Constructed CSS file path:", css_file_path)
 
     # Read CSS code from style.css file
     try:
@@ -46,11 +51,10 @@ def get_chat_message(
         contents: str = "",
         align: str = "left"
 ) -> str:
-
-    # Formats the message in an chat fashion (user right, reply left)
+    # Formats the message in a chat fashion (user right, reply left)
     div_class = "AI-line"
     color = "rgb(54, 65, 85)"
-    file_path = os.path.join(ROOT_DIR, "FCSITCareerBuddy" , "assets", "bot.png")
+    file_path = os.path.join(ROOT_DIR, "FCSITCareerBuddy", "assets", "bot.png")
     src = f"data:image/gif;base64,{get_local_img(file_path)}"
 
     if align == "right":
@@ -59,7 +63,7 @@ def get_chat_message(
         if "USER" in st.session_state:
             src = st.session_state.USER.avatar_url
         else:
-            file_path = os.path.join(ROOT_DIR, "FCSITCareerBuddy" ,"assets", "user_icon.png")
+            file_path = os.path.join(ROOT_DIR, "FCSITCareerBuddy", "assets", "user_icon.png")
             src = f"data:image/gif;base64,{get_local_img(file_path)}"
     icon_code = f"<img class='chat-icon' src='{src}' width=32 height=32 alt='avatar'>"
     formatted_contents = f"""
@@ -67,6 +71,7 @@ def get_chat_message(
             {icon_code}
             <div class="chat-bubble" style="background: {color}; color: white;">
             &#8203;{contents}
+        </div>
         """
     return formatted_contents
 
@@ -77,5 +82,5 @@ async def type_reply(reply_box, message):
     for char in message:
         typed_message += char
         reply_box.markdown(get_chat_message(typed_message), unsafe_allow_html=True)
-        await asyncio.sleep(0.0010)
+        await asyncio.sleep(0.010)  # Increased sleep time for better visibility
     reply_box.markdown(get_chat_message(typed_message), unsafe_allow_html=True)
