@@ -45,6 +45,5 @@ traitlets==5.9.0
 transformers==4.40.1
 webcolors==1.13
 webdriver-manager==4.0.1
-streamlit_gsheets
 webencodings==0.5.1
 websocket-client==1.5.1
