@@ -16,6 +16,9 @@ gspread-formatting==1.1.2
 gspread-pandas==3.3.0
 keras==3.3.3
 matplotlib==3.7.1
+matplotlib-inline==0.1.6
+notebook==6.5.4
+notebook_shim==0.2.3
 npx==0.1.2
 nltk==3.5
 numpy==1.24.3
@@ -42,5 +45,6 @@ traitlets==5.9.0
 transformers==4.40.1
 webcolors==1.13
 webdriver-manager==4.0.1
+streamlit_gsheets
 webencodings==0.5.1
 websocket-client==1.5.1
