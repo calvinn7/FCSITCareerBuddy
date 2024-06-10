@@ -9,7 +9,7 @@ from models.faq_model import get_most_similar_question
 from data_preprocessing import load_job_data
 from data_preprocessing import load_events
 from data_preprocessing import preprocess_text
-from models.intent_classification import classify_intent
+from intent_classification import classify_intent
 from responses import get_greet_response, get_bye_response
 from user_feedback import feedback
 from welcome_screen import render_welcome_screen
@@ -76,7 +76,7 @@ async def main(human_prompt: str) -> dict:
 
                 #Display recommended jobs in a table
 
-                reply_text = "<h5>Here are some personalised jobs for you:</h5>"
+                reply_text = "<h5>Hi there, I found some jobs for you:</h5>"
                 for _, job in recommended_jobs.iterrows():
                     star_rating = get_star_rating(job['overall_rating'])
                     reply_text += f""" 
@@ -173,7 +173,7 @@ else:
     <div class="gradient-text">Welcome to FCSIT Career Buddy</div>
     """
     st.markdown(gradient_text_html, unsafe_allow_html=True)
-    st.subheader ("Your personal AI-powered career companion ")
+    st.subheader ("Your AI-powered career companion ")
     chat_box = st.container()
     st.write("")
     prompt_box = st.empty()
