@@ -89,13 +89,13 @@ def render_welcome_screen():
     <div class="quote">{selected_quote}</div>
     """
     st.markdown(gradient_text_html, unsafe_allow_html=True)
-    st.subheader("Your personal AI-powered career companion")
+    st.subheader("Your AI-powered career companion")
 
     st.markdown("""
     **FCSIT Career Buddy** is designed to help you with job recommendations, networking events, and application guidance.
     
     **How to Use:**
-    - Ask any questions about job recommendations, networking events or internship application.
+    - Ask any questions about job recommendations, networking opportunities or internship application.
     - Use the chat interface to chat with your Career Buddy.
     - Click the button below to get started!
     """)

@@ -22,10 +22,19 @@ def get_star_rating(rating):
 
 @st.cache_data(show_spinner=False)
 def get_css() -> str:
+    # Construct relative file path
+    css_file_path = os.path.join(ROOT_DIR, "FCSITCareerBuddy", "style.css")
+
+    # Debugging: print constructed file path
+    print("Constructed CSS file path:", css_file_path)
 
     # Read CSS code from style.css file
-    with open(os.path.join(ROOT_DIR, "FCSITCareerBuddy" ,  "style.css"), "r") as f:
-        return f"<style>{f.read()}</style>"
+    try:
+        with open(css_file_path, "r") as f:
+            return f"<style>{f.read()}</style>"
+    except FileNotFoundError:
+        st.error(f"CSS file not found at path: {css_file_path}")
+        return ""
 
 def clear_chat():
     st.session_state.LOG = ["Hello! How can I assist you today?"]
