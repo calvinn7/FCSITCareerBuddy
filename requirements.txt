@@ -47,3 +47,4 @@ webcolors==1.13
 webdriver-manager==4.0.1
 webencodings==0.5.1
 websocket-client==1.5.1
+pytz==2022.1
