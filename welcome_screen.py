@@ -1,14 +1,24 @@
 from datetime import datetime
 import streamlit as st
+import pytz
 
-#define greeting based on time
 def get_dynamic_greeting():
-    current_hour = datetime.now().hour
-    if 5 <= current_hour < 12:
+    # Get the current time in UTC timezone
+    current_time_utc = datetime.now(pytz.utc)
+
+    # Convert UTC time to UTC+8 timezone
+    timezone_utc_8 = pytz.timezone('Asia/Kuala_Lumpur')
+    current_time_utc_8 = current_time_utc.astimezone(timezone_utc_8)
+
+    # Get the hour in UTC+8 timezone
+    current_hour_utc_8 = current_time_utc_8.hour
+
+    # Define greetings based on the hour in UTC+8 timezone
+    if 5 <= current_hour_utc_8 < 12:
         return "🌞 Good Morning"
-    elif 12 <= current_hour < 17:
+    elif 12 <= current_hour_utc_8 < 17:
         return "🌤 Good Afternoon"
-    elif 17 <= current_hour < 21:
+    elif 17 <= current_hour_utc_8 < 21:
         return "🌙 Good Evening"
     else:
         return "👋🏻 Hello"
