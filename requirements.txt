@@ -7,6 +7,8 @@ google-api-python-client==2.130.0
 google-auth==2.29.0
 google-auth-httplib2==0.2.0
 google-auth-oauthlib==1.2.0
+google-pasta==0.2.0
+googleapis-common-protos==1.63.0
 gsheets==0.6.1
 gspread==5.12.4
 gspread-dataframe==3.3.1
@@ -14,6 +16,9 @@ gspread-formatting==1.1.2
 gspread-pandas==3.3.0
 keras==3.3.3
 matplotlib==3.7.1
+matplotlib-inline==0.1.6
+notebook==6.5.4
+notebook_shim==0.2.3
 npx==0.1.2
 nltk==3.5
 numpy==1.24.3
