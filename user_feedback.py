@@ -12,7 +12,7 @@ def feedback():
     conn = st.connection("gsheets", type=GSheetsConnection)
 
     # Fetch existing data
-    existed_data = conn.read(worksheet="Users", usecols=list(range(6)), ttl=5)
+    existed_data = conn.read(worksheet="Users", usecols=list(range(6)))
     existed_data = existed_data.dropna(how="all")
 
     # Initialize the options to choose from
